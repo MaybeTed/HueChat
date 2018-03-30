@@ -3,6 +3,8 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 const compiler = webpack(webpackConfig);
 
@@ -18,8 +20,14 @@ app.use(webpackDevMiddleware(compiler, {
 	historyApiFallback: true,
 }));
 
-const server = app.listen(3000, function() {
-	const host = server.address().address;
-	const port = server.address().port;
-	console.log('Chat app listening at http://%s:%s', host, port);
-});
+io.on('connection', function(socket) {
+	console.log('we have a connection');
+	socket.on('new-message', function(msg) {
+		console.log('the message: ', msg);
+		io.emit('receive-message', msg);
+	})
+})
+
+http.listen('3000', function() {
+	console.log('Chat app is listening')
+})

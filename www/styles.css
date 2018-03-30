@@ -1,0 +1,83 @@
+body {
+	background: black;
+	padding: 5%;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+/**********************/
+/*       NAV          */
+
+.nav-container {
+	background: #ff6600;
+	height: 60px;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.title {
+	font-weight: bold;
+	position: absolute;
+	left: 50%;
+	top: 0;
+	margin: 0;
+	margin-top: 10px;
+	transform: translateX(-50%);
+}
+
+.login-buttons {
+	width: 200px;
+	padding-top: 10px;
+}
+
+.login-buttons li {
+	display: inline-block;
+	border: 1px solid black;
+	padding: 10px 15px;
+	margin-left: 20px;
+	cursor: pointer;
+}
+
+/**********************/
+/*       CHAT         */
+
+.main-container {
+	background: white;
+	border: 5px solid gray;
+	height: 500px;
+}
+
+.messages-container {
+	border: 1px solid black;
+	width: 90%;
+	height: 450px;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	list-style-type: none;
+	padding: 0;
+}
+
+.write-message-container {
+	position: relative;
+	width: 90%;
+	margin: auto;
+}
+
+.write-message-container input {
+	position: absolute;
+	width: calc(100% - 57px);
+	left: 0;
+	top: 0;
+}
+
+.write-message-container button {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 55px;
+	margin-left: 3px;
+}
