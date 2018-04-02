@@ -1,5 +1,4 @@
 import React from 'react';
-import Nav from './Nav';
 
 class Chat extends React.Component {
 	constructor() {
@@ -36,8 +35,6 @@ class Chat extends React.Component {
 		});
 
 		return (
-			<div>
-			  <Nav />
 			  <div className="main-container">
 				<ul className="messages-container">
 				  {messages}
@@ -49,7 +46,6 @@ class Chat extends React.Component {
 				  </form>
 			    </div>
 			  </div>
-			</div>
 		);
 	}
 }

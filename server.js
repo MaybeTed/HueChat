@@ -2,11 +2,19 @@ const express = require('express');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
+const path = require('path');
+const passport = require('passport');
+const flash = require('connect-flash');
+const morgan = require('morgan');
 const app = express();
 const http = require('http').Server(app);
+const configDB = require('./config/database.js');
+const session = require('express-session');
 const io = require('socket.io')(http);
 
 const compiler = webpack(webpackConfig);
+
+const port = process.env.port || '3000';
 
 app.use(express.static(__dirname + '/www'));
 
@@ -20,6 +28,19 @@ app.use(webpackDevMiddleware(compiler, {
 	historyApiFallback: true,
 }));
 
+app.use(morgan('dev')); // log every request to the console
+
+// required for passport
+app.use(session({secret: 'thisisthebesthue'})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, '/../www/index.html'));
+});
+
+// sockets
 io.on('connection', function(socket) {
 	console.log('we have a connection');
 	socket.on('new-message', function(msg) {
@@ -28,6 +49,6 @@ io.on('connection', function(socket) {
 	})
 })
 
-http.listen('3000', function() {
+http.listen(port, function() {
 	console.log('Chat app is listening')
 })
