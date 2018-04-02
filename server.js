@@ -8,7 +8,7 @@ const flash = require('connect-flash');
 const morgan = require('morgan');
 const app = express();
 const http = require('http').Server(app);
-const configDB = require('./config/database.js');
+//const configDB = require('./config/database.js');
 const session = require('express-session');
 const io = require('socket.io')(http);
 
