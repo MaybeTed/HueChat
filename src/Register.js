@@ -5,19 +5,27 @@ class Register extends React.Component {
 		super();
 		this.state = {
 			nameResponse: '',
-			passResponse: ''
+			passResponse: '',
+			emailResponse: ''
 		}
 	}
 	
 	render() {
 		return (
 			  <div className="login">
-			  	Enter your username
+			  	Username
+			  	<br />
 			  	<input id="userlogin"/>
 			  	<div className="username-response">{this.state.nameResponse}</div>
-			  	Enter your password
+			  	Password
+			  	<br />
 			  	<input id="userpass"/>
 			  	<div className="password-response">{this.state.passResponse}</div>
+			  	Email
+			  	<br />
+			  	<input id="email"/>
+			  	<div className="email-response">{this.state.emailResponse}</div>
+			  	<button>Submit</button>
 			  </div>
 		);
 	}

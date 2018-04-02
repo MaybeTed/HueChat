@@ -8,16 +8,19 @@ class Login extends React.Component {
 			passResponse: ''
 		}
 	}
-	
+
 	render() {
 		return (
 			  <div className="login">
-			  	Enter your username
+			  	Username
+			  	<br />
 			  	<input id="userlogin"/>
 			  	<div className="username-response">{this.state.nameResponse}</div>
-			  	Enter your password
+			  	Password
+			  	<br />
 			  	<input id="userpass"/>
 			  	<div className="password-response">{this.state.passResponse}</div>
+			  	<button>Submit</button>
 			  </div>
 		);
 	}

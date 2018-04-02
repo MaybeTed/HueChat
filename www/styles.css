@@ -8,6 +8,10 @@ ul {
 	padding: 0;
 }
 
+a {
+	color: inherit;
+}
+
 /**********************/
 /*       NAV          */
 
@@ -81,3 +85,19 @@ ul {
 	width: 55px;
 	margin-left: 3px;
 }
+
+/**********************/
+/*       Register     */
+
+.login {
+	color: gray;
+}
+
+.login input {
+	margin: 15px 0;
+}
+
+
+
+
+
