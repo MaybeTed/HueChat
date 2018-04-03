@@ -1,12 +1,43 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider, connect } from 'react-redux';
+import store from '../store';
+import reducer from './reducers/index';
 import Nav from './Nav';
 import Chat from './Chat';
 import Login from './Login';
 import Register from './Register';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Actions from './actions/index';
+
+const mapStateToProps = (state) => {
+	return {
+		auth: state.auth
+	}
+}
 
 class App extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			
+		}
+		//this.logout = this.logout.bind(this);
+	}
+
+	componentDidMount() {
+		Actions.fetchUser();
+	}
+
+	// logout() {
+	// 	axios.get('/api/logout')
+	// 	  .then(() => { 
+	// 		this.setState({ user: {name: 'guest'} });
+	// 	  })
+	// }
+
 	render() {
 		return (
 			<div>
@@ -23,9 +54,13 @@ class App extends React.Component {
 
 document.addEventListener('DOMContentLoaded', function() {
 	ReactDOM.render(
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>,
+		<Provider store={store}>
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
+		</Provider>,
 		document.getElementById('mount')
 	);
 });
+
+export default connect(mapStateToProps, { Actions })(App);

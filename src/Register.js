@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import { withRouter } from "react-router-dom";
+import Actions from './actions/index';
 
 class Register extends React.Component {
 	constructor() {
@@ -60,6 +62,9 @@ class Register extends React.Component {
 			name,
 			password,
 		   	email
+		}).then(() => {
+			Actions.fetchUser();
+			this.props.history.push('/')
 		})
 	}
 	
@@ -84,4 +89,4 @@ class Register extends React.Component {
 	}
 }
 
-export default Register;
+export default withRouter(Register);

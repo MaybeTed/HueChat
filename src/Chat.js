@@ -1,11 +1,20 @@
 import React from 'react';
+import axios from 'axios';
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state) => {
+	return {
+		auth: state.auth
+	}
+}
 
 class Chat extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			messages: [],
-			socket: window.io('http://localhost:3000')
+			socket: window.io('http://localhost:3000'),
+			user: {name: 'guest'}
 		};
 		this.submitMessage = this.submitMessage.bind(this);
 	}
@@ -22,16 +31,22 @@ class Chat extends React.Component {
 
 	submitMessage() {
 		event.preventDefault();
-		let message = document.getElementById('message').value;
-		console.log('the message: ', message);
+		let name = 'guest';
+		if (this.props.auth && this.props.auth.name) {
+			name = this.props.auth.name;
+		}
+		let message = {
+			user: name,
+			message: document.getElementById('message').value
+		};
 		this.state.socket.emit('new-message', message);
 		document.getElementById('message').value = '';
 	}
 
 	render() {
-		const self = this;
-		let messages = self.state.messages.map((msg, i) => {
-			return <li key={i}>{msg}</li>
+		let messages = this.state.messages.map((msg, i) => {
+			console.log('msg: ', msg)
+			return <li key={i}>{msg.user}: {msg.message}</li>
 		});
 
 		return (
@@ -50,4 +65,4 @@ class Chat extends React.Component {
 	}
 }
 
-export default Chat;
+export default connect(mapStateToProps)(Chat);
