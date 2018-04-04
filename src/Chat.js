@@ -23,9 +23,7 @@ class Chat extends React.Component {
 		const self = this;
 		this.state.socket.on('receive-message', function(msg) {
 			console.log('received this message: ', msg)
-			let messages = self.state.messages;
-			messages.push(msg);
-			self.setState({ messages });
+			self.setState({ messages: msg });
 		});
 	}
 

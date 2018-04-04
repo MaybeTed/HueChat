@@ -27,12 +27,15 @@ const messagesSchema = mongoose.Schema({
 
 const Message = mongoose.model('Message', messagesSchema);
 
-function insertMessage(name, message) {
+function insertMessage(name, message, callback) {
 	let msg = new Message({
 		user: name,
-		message: message
+		message: message,
+		date: new Date(),
 	})
-	msg.save();
+	msg.save().then(function() {
+		callback();
+	});
 }
 
 exports.insertUser = insertUser;
