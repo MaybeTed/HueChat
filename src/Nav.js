@@ -14,7 +14,7 @@ class Nav extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			
+		
 		}
 		this.logout = this.logout.bind(this);
 	}
@@ -31,14 +31,12 @@ class Nav extends React.Component {
 	}
 
 	render() {
-		console.log('this.props.auth: ', this.props.auth)
 		return (
 			<div className="nav-container">
 			  <ul className="login-buttons">
 			    {this.props.auth ?
 			    	<div>
-			    	<p>Welcome {this.props.auth.name}</p>
-			    	<li onClick={this.logout}>Logout</li>
+			    	<p className="welcome">Welcome {this.props.auth.name}</p>
 			    	</div>
 			    	:
 			    	<div>
@@ -48,6 +46,7 @@ class Nav extends React.Component {
 			    }
 			  </ul>
 			  <Link to="/"><h1 className="title">Hue Chat</h1></Link>
+			  <div className="logout" onClick={this.logout}>Logout</div>
 			</div>
 		)
 	}
