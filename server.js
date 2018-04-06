@@ -3,6 +3,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -17,11 +18,15 @@ const port = process.env.port || '3000';
 
 let connections = [];
 
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
 	secret: 'eiuvpq',
-	resave: false,
 	saveUninitialized: true,
-	cookie: { secure: false }
+	resave: false,
+	cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 app.use(express.static(__dirname + '/www'));
@@ -36,14 +41,10 @@ app.use(webpackDevMiddleware(compiler, {
 	historyApiFallback: true,
 }));
 
-app.use(morgan('dev')); // log every request to the console
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 
 
 app.post('/api/register', (req, res) => {
-	db.insertUser(req.body.name, req.body.email);
+	db.insertUser(req.body.name, req.body.password, req.body.email);
 	req.session.regenerate(() => {
 		req.session.user = {
 			name: req.body.name,
@@ -55,6 +56,7 @@ app.post('/api/register', (req, res) => {
 });
 
 app.get('/api/getUser', (req, res) => {
+	console.log('FROM /getUser, session: ', req.session.user)
 	if (req.session.user) {
 		res.send(req.session.user);
 	} else {
@@ -62,10 +64,34 @@ app.get('/api/getUser', (req, res) => {
 	}
 });
 
+app.post('/login', (req, res) => {
+	let name = req.body.username;
+	let pass = req.body.password;
+	db.user.findOne({ username: name })
+		.exec(function(err, data) {
+			if (err) {
+				console.log('unable to find user');
+				res.send('that username doesn\'t exist');
+			} else {
+				if (data === null) {
+					res.send('noUser')
+				} else if (pass === data.password) {
+					req.session.user = {
+						name: data.username,
+						email: data.email
+					}
+					res.send('success');
+				} else {
+					res.send('incorrect password');
+				}
+			}
+		})
+});
+
 app.get('/logout', (req, res) => {
 	req.session.destroy();
 	res.end();
-})
+});
 
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '/www/index.html'));
