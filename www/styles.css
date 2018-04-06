@@ -66,6 +66,13 @@ a {
 	background: white;
 	border: 5px solid gray;
 	height: 500px;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+
+.chat-left {
+	width: 84%;
 }
 
 .messages-container {
@@ -98,6 +105,18 @@ a {
 	top: 0;
 	width: 55px;
 	margin-left: 3px;
+}
+
+.chat-right {
+	width: 14%;
+	margin-right: 2%;
+	margin-top: 10px;
+}
+
+.users-container {
+	border: 1px solid black;
+	width: 100%;
+	padding: 5px 0 0 5px;
 }
 
 /**********************/

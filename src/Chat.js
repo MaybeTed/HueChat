@@ -14,7 +14,8 @@ class Chat extends React.Component {
 		this.state = {
 			messages: [],
 			socket: window.io('http://localhost:3000'),
-			user: {name: 'guest'}
+			user: {name: 'guest'},
+			users: []
 		};
 		this.submitMessage = this.submitMessage.bind(this);
 	}
@@ -24,11 +25,24 @@ class Chat extends React.Component {
 		this.state.socket.on('receive-message', function(msg) {
 			self.setState({ messages: msg });
 		});
+		this.state.socket.on('users list', function(users) {
+			self.setState({ users })
+		})
 	}
 
 	componentWillUnmount() {
-		console.log('unmount running');
 		this.state.socket.emit('unmount', 'please disconnect');
+	}
+
+	componentWillReceiveProps(nextProps) {
+		let user;
+		console.log('nextProps: ', nextProps)
+		if (nextProps.auth && nextProps.auth.name) {
+			user = nextProps.auth.name;
+		} else {
+			user = 'guest';
+		}
+		this.state.socket.emit('user', user);
 	}
 
 	submitMessage() {
@@ -50,16 +64,31 @@ class Chat extends React.Component {
 			return <li key={i}>{msg.user}: {msg.message}</li>
 		});
 
+		let users = this.state.users.map((user, i) => {
+			return <li key={i}>{user}</li>
+		});
+		console.log('this.state.users: ', this.state.users)
+
 		return (
 			  <div className="main-container">
-				<ul className="messages-container">
-				  {messages}
-				</ul>
-				<div class="write-message-container">
-				  <form onSubmit={this.submitMessage}>
-				    <input id="message" type="text" placeholder="Write your message here" />
-				    <button type="submit">Send</button>
-				  </form>
+			  	<div className="chat-left">
+				  <ul className="messages-container">
+				    {messages}
+				  </ul>
+				  <div class="write-message-container">
+				    <form onSubmit={this.submitMessage}>
+				      <input id="message" type="text" placeholder="Write your message here" />
+				      <button type="submit">Send</button>
+				    </form>
+			      </div>
+			    </div>
+			    <div className="chat-right">
+			      <div className="users-container">
+			        Online
+			        <ul>
+			          {users}
+			        </ul>
+			      </div>
 			    </div>
 			  </div>
 		);

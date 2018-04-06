@@ -17,6 +17,7 @@ const compiler = webpack(webpackConfig);
 const port = process.env.port || '3000';
 
 let connections = [];
+let users = [];
 
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser());
@@ -117,6 +118,16 @@ io.on('connection', function(socket) {
 	// when user connects, send them all the messages
 	getMessages();
 
+	// Save username to socket
+	socket.on('user', function(data) {
+		socket.username = data;
+		for (var item in io.sockets.sockets) {
+			console.log('socketID: ', item, ' username: ', io.sockets.sockets[item]['username'])
+			users.push(io.sockets.sockets[item]['username']);
+		}
+		io.sockets.emit('users list', users);
+	})
+
 
 	// Handle new message
 	socket.on('new-message', function(msg) {
@@ -124,6 +135,7 @@ io.on('connection', function(socket) {
 		db.insertMessage(msg.user, msg.message, getMessages);
 	})
 
+	// Disconnect when navigating away from chat component
 	socket.on('unmount', function(data) {
 		socket.disconnect();
 	})
@@ -131,6 +143,8 @@ io.on('connection', function(socket) {
 	// Disconnect
 	socket.on('disconnect', function(data) {
 	  connections.splice(connections.indexOf(socket), 1);
+	  users.splice(users.indexOf(socket), 1);
+	  console.log('number of users: ', users.length)
 	  console.log('Disconnected: %s sockets connected', connections.length);
 	});
 
