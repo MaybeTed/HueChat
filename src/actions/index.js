@@ -5,7 +5,6 @@ const Actions = {};
 
 Actions.fetchUser = async () => {
 	const request = await axios('/api/getUser');
-	console.log('request: ', request)
 	store.dispatch({
 		type: 'FETCH_USER',
 		payload: request.data

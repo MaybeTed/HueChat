@@ -22,7 +22,6 @@ class Chat extends React.Component {
 	componentDidMount() {
 		const self = this;
 		this.state.socket.on('receive-message', function(msg) {
-			console.log('received this message: ', msg)
 			self.setState({ messages: msg });
 		});
 	}
@@ -43,7 +42,6 @@ class Chat extends React.Component {
 
 	render() {
 		let messages = this.state.messages.map((msg, i) => {
-			console.log('msg: ', msg)
 			return <li key={i}>{msg.user}: {msg.message}</li>
 		});
 
