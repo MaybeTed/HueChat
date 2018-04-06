@@ -26,6 +26,11 @@ class Chat extends React.Component {
 		});
 	}
 
+	componentWillUnmount() {
+		console.log('unmount running');
+		this.state.socket.emit('unmount', 'please disconnect');
+	}
+
 	submitMessage() {
 		event.preventDefault();
 		let name = 'guest';

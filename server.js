@@ -124,6 +124,10 @@ io.on('connection', function(socket) {
 		db.insertMessage(msg.user, msg.message, getMessages);
 	})
 
+	socket.on('unmount', function(data) {
+		socket.disconnect();
+	})
+
 	// Disconnect
 	socket.on('disconnect', function(data) {
 	  connections.splice(connections.indexOf(socket), 1);
