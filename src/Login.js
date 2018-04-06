@@ -1,4 +1,7 @@
 import React from 'react';
+import axios from 'axios';
+import { withRouter } from 'react-router-dom';
+import Actions from './actions/index';
 
 class Login extends React.Component {
 	constructor() {
@@ -7,6 +10,26 @@ class Login extends React.Component {
 			nameResponse: '',
 			passResponse: ''
 		}
+		this.handleLogin = this.handleLogin.bind(this);
+	}
+
+	handleLogin() {
+		let name = document.getElementById('userlogin').value;
+		let pass = document.getElementById('userpass').value;
+		axios('/login', {
+			method: 'post',
+			data: { username: name, password: pass },
+			withCredentials: true
+		}).then((response) => {
+			if (response.data === 'success') {
+				Actions.fetchUser();
+				this.props.history.push('/');
+			} else if (response.data === 'noUser') {
+				this.setState({ nameResponse: 'That username does not exist!', passResponse: '' })
+			} else if (response.data === 'incorrect password') {
+				this.setState({ nameResponse: '', passResponse: 'incorrect password' })
+			}
+		})
 	}
 
 	render() {
@@ -20,10 +43,10 @@ class Login extends React.Component {
 			  	<br />
 			  	<input id="userpass"/>
 			  	<div className="password-response">{this.state.passResponse}</div>
-			  	<button>Submit</button>
+			  	<button onClick={this.handleLogin}>Submit</button>
 			  </div>
 		);
 	}
 }
 
-export default Login;
+export default withRouter(Login);
