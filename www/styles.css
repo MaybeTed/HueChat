@@ -45,6 +45,20 @@ a {
 	cursor: pointer;
 }
 
+.welcome {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.logout {
+	border: 1px solid black;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 10px 15px;
+	cursor: pointer;
+}
+
 /**********************/
 /*       CHAT         */
 
@@ -62,7 +76,7 @@ a {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	list-style-type: none;
-	padding: 0;
+	padding: 0 0 0 5px;
 }
 
 .write-message-container {
