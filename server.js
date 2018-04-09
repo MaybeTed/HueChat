@@ -77,9 +77,12 @@ app.post('/login', (req, res) => {
 				console.log('unable to find user');
 				res.send('that username doesn\'t exist');
 			} else {
+				const password = data.password;
+				const salt = data.salt;
+				const hash = bcrypt.hashSync(pass, salt);
 				if (data === null) {
 					res.send('noUser')
-				} else if (pass === data.password) {
+				} else if (hash === password) {
 					req.session.user = {
 						name: data.username,
 						email: data.email
