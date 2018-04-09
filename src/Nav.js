@@ -46,7 +46,10 @@ class Nav extends React.Component {
 			    }
 			  </ul>
 			  <Link to="/"><h1 className="title">Hue Chat</h1></Link>
+			  {this.props.auth ? 
 			  <div className="logout" onClick={this.logout}>Logout</div>
+			  :
+			  null }
 			</div>
 		)
 	}
