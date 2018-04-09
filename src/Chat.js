@@ -42,7 +42,6 @@ class Chat extends React.Component {
 
 	componentWillReceiveProps(nextProps) {
 		let user;
-		console.log('nextProps: ', nextProps)
 		if (nextProps.auth && nextProps.auth.name) {
 			user = nextProps.auth.name;
 		} else {
@@ -59,7 +58,6 @@ class Chat extends React.Component {
 		event.preventDefault();
 		let name = 'guest';
 		let msg = document.getElementById('message').value;
-		console.log('msg: ', msg);
 		if (this.props.auth && this.props.auth.name) {
 			name = this.props.auth.name;
 		}
@@ -82,7 +80,6 @@ class Chat extends React.Component {
 		let users = this.state.users.map((user, i) => {
 			return <li key={i}>{user}</li>
 		});
-		console.log('this.state.users: ', this.state.users)
 
 		return (
 			  <div className="main-container">
