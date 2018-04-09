@@ -58,12 +58,17 @@ class Chat extends React.Component {
 	submitMessage() {
 		event.preventDefault();
 		let name = 'guest';
+		let msg = document.getElementById('message').value;
+		console.log('msg: ', msg);
 		if (this.props.auth && this.props.auth.name) {
 			name = this.props.auth.name;
 		}
+		if (/[<script>]/g.test(msg)) {
+			return;
+		}
 		let message = {
 			user: name,
-			message: document.getElementById('message').value
+			message: msg
 		};
 		this.state.socket.emit('new-message', message);
 		document.getElementById('message').value = '';
