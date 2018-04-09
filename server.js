@@ -118,15 +118,21 @@ io.on('connection', function(socket) {
 	// when user connects, send them all the messages
 	getMessages();
 
-	// Save username to socket
-	socket.on('user', function(data) {
-		socket.username = data;
+	function getUsers() {
+		users = [];
 		for (var item in io.sockets.sockets) {
 			console.log('socketID: ', item, ' username: ', io.sockets.sockets[item]['username'])
 			users.push(io.sockets.sockets[item]['username']);
 		}
 		io.sockets.emit('users list', users);
+	}
+
+	// Save username to socket
+	socket.on('user', function(data) {
+		socket.username = data;
+		getUsers();
 	})
+
 
 
 	// Handle new message
@@ -144,6 +150,7 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function(data) {
 	  connections.splice(connections.indexOf(socket), 1);
 	  users.splice(users.indexOf(socket), 1);
+	  getUsers();
 	  console.log('number of users: ', users.length)
 	  console.log('Disconnected: %s sockets connected', connections.length);
 	});
