@@ -8,16 +8,18 @@ mongoose.connect('mongodb://localhost/huechat', (err) => {
 const userSchema = mongoose.Schema({
 	username: { type: String, required: true },
 	password: { type: String, required: true },
-	email: { type: String, required: true }
+	email: { type: String, required: true },
+	salt: { type: String, required: true }
 });
 
 const User = mongoose.model('User', userSchema);
 
-function insertUser(name, password, email) {
+function insertUser(name, password, email, salt) {
 	let user = new User({
 		username: name,
 		password: password,
-		email: email
+		email: email,
+		salt: salt
 	})
 	user.save();
 }
