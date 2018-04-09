@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
 const app = express();
 const http = require('http').Server(app);
 const db = require('./database/db.js');
@@ -45,7 +46,9 @@ app.use(webpackDevMiddleware(compiler, {
 
 
 app.post('/api/register', (req, res) => {
-	db.insertUser(req.body.name, req.body.password, req.body.email);
+	const salt = bcrypt.genSaltSync();
+	const hash = bcrypt.hashSync(req.body.password, salt);
+	db.insertUser(req.body.name, hash, req.body.email, salt);
 	req.session.regenerate(() => {
 		req.session.user = {
 			name: req.body.name,
