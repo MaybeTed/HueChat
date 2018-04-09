@@ -63,7 +63,7 @@ class Chat extends React.Component {
 		if (this.props.auth && this.props.auth.name) {
 			name = this.props.auth.name;
 		}
-		if (/[<script>]/g.test(msg)) {
+		if (/<script>/g.test(msg)) {
 			return;
 		}
 		let message = {
