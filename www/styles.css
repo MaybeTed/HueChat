@@ -84,6 +84,7 @@ a {
 	margin-bottom: 10px;
 	list-style-type: none;
 	padding: 0 0 0 5px;
+	overflow: scroll;
 }
 
 .write-message-container {

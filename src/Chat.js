@@ -17,10 +17,12 @@ class Chat extends React.Component {
 			user: {name: 'guest'},
 			users: []
 		};
+		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.submitMessage = this.submitMessage.bind(this);
 	}
 
 	componentDidMount() {
+		this.scrollToBottom();
 		const self = this;
 		this.state.socket.on('receive-message', function(msg) {
 			self.setState({ messages: msg });
@@ -34,6 +36,10 @@ class Chat extends React.Component {
 		this.state.socket.emit('unmount', 'please disconnect');
 	}
 
+	componentDidUpdate() {
+		this.scrollToBottom();
+	}
+
 	componentWillReceiveProps(nextProps) {
 		let user;
 		console.log('nextProps: ', nextProps)
@@ -43,6 +49,10 @@ class Chat extends React.Component {
 			user = 'guest';
 		}
 		this.state.socket.emit('user', user);
+	}
+
+	scrollToBottom() {
+		this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
 	}
 
 	submitMessage() {
@@ -74,6 +84,7 @@ class Chat extends React.Component {
 			  	<div className="chat-left">
 				  <ul className="messages-container">
 				    {messages}
+				    <li style={{float: 'left', clear: 'both'}} ref={(el) => { this.messagesEnd = el; }} />
 				  </ul>
 				  <div class="write-message-container">
 				    <form onSubmit={this.submitMessage}>
