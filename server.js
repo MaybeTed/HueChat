@@ -164,5 +164,5 @@ io.on('connection', function(socket) {
 })
 
 http.listen(port, function() {
-	console.log('Chat app is listening')
+	console.log('Chat app is listening at: ', port)
 })
