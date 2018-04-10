@@ -13,7 +13,7 @@ class Chat extends React.Component {
 		super();
 		this.state = {
 			messages: [],
-			socket: window.io('http://localhost:3000'),
+			socket: window.io(location.host),
 			user: {name: 'guest'},
 			users: []
 		};
