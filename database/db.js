@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/huechat', (err) => {
+const connection = process.env.MONGOLAB_URI || 'mongodb://localhost/huechat';
+
+mongoose.connect(connection, (err) => {
 	if (err) throw err;
 	console.log('Successfully connected');
 });
