@@ -41,7 +41,7 @@ class Login extends React.Component {
 			  	<div className="username-response">{this.state.nameResponse}</div>
 			  	Password
 			  	<br />
-			  	<input id="userpass"/>
+			  	<input type="password" id="userpass"/>
 			  	<div className="password-response">{this.state.passResponse}</div>
 			  	<button onClick={this.handleLogin}>Submit</button>
 			  </div>
