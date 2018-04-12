@@ -112,7 +112,7 @@ io.on('connection', function(socket) {
 	function getMessages() {
 		// Get messages from mongo
 		db.message.find()
-			.sort('-date')
+			.sort('date')
 			.exec(function(err, data) {
 				if (err) {
 					console.log('error retrieving messages: ', err);
@@ -144,7 +144,7 @@ io.on('connection', function(socket) {
 	// Handle new message
 	socket.on('new-message', function(msg) {
 		// insert into db
-		db.insertMessage(msg.user, msg.message, getMessages);
+		db.insertMessage(msg.user, msg.message, msg.color, getMessages);
 	})
 
 	// Disconnect when navigating away from chat component

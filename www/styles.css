@@ -112,12 +112,56 @@ a {
 	width: 14%;
 	margin-right: 2%;
 	margin-top: 10px;
+	position: relative;
 }
 
 .users-container {
 	border: 1px solid black;
 	width: 100%;
 	padding: 5px 0 0 5px;
+}
+
+.colors-container {
+	position: absolute;
+	bottom: 5px;
+	display: flex;
+	/*flex-wrap: wrap;*/
+	justify-content: space-around;
+	/*width: 20px;*/
+}
+
+.colors-container div {
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+}
+
+#black {
+	background: black;
+}
+
+#blue {
+	background: blue;
+}
+
+#red {
+	background: red;
+}
+
+#green {
+	background: green;
+}
+
+#orange {
+	background: orange;
+}
+
+#purple {
+	background: purple;
+}
+
+#pink {
+	background: pink;
 }
 
 /**********************/

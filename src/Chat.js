@@ -12,12 +12,14 @@ class Chat extends React.Component {
 	constructor() {
 		super();
 		this.state = {
+			color: 'black',
 			messages: [],
 			socket: window.io(location.host),
 			user: {name: 'guest'},
 			users: []
 		};
 		this.scrollToBottom = this.scrollToBottom.bind(this);
+		this.selectColor = this.selectColor.bind(this);
 		this.submitMessage = this.submitMessage.bind(this);
 	}
 
@@ -54,6 +56,10 @@ class Chat extends React.Component {
 		this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
 	}
 
+	selectColor(color) {
+		this.setState({ color });
+	}
+
 	submitMessage() {
 		event.preventDefault();
 		let name = 'guest';
@@ -66,7 +72,8 @@ class Chat extends React.Component {
 		}
 		let message = {
 			user: name,
-			message: msg
+			message: msg,
+			color: this.state.color
 		};
 		this.state.socket.emit('new-message', message);
 		document.getElementById('message').value = '';
@@ -74,7 +81,7 @@ class Chat extends React.Component {
 
 	render() {
 		let messages = this.state.messages.map((msg, i) => {
-			return <li key={i}>{msg.user}: {msg.message}</li>
+			return <li key={i}>{msg.user}: <span style={{'color': msg.color}}>{msg.message}</span></li>
 		});
 
 		let users = this.state.users.map((user, i) => {
@@ -90,7 +97,7 @@ class Chat extends React.Component {
 				  </ul>
 				  <div class="write-message-container">
 				    <form onSubmit={this.submitMessage}>
-				      <input id="message" type="text" placeholder="Write your message here" />
+				      <input id="message" type="text" style={{'color': this.state.color}} placeholder="Write your message here" />
 				      <button type="submit">Send</button>
 				    </form>
 			      </div>
@@ -101,6 +108,15 @@ class Chat extends React.Component {
 			        <ul>
 			          {users}
 			        </ul>
+			      </div>
+			      <div className="colors-container">
+			      	<div id="black" onClick={() => this.selectColor('black')}/>
+			      	<div id="blue" onClick={() => this.selectColor('blue')}/>
+			      	<div id="red" onClick={() => this.selectColor('red')}/>
+			      	<div id="green" onClick={() => this.selectColor('green')}/>
+			      	<div id="orange" onClick={() => this.selectColor('orange')}/>
+			      	<div id="purple" onClick={() => this.selectColor('purple')}/>
+			      	<div id="pink" onClick={() => this.selectColor('pink')}/>
 			      </div>
 			    </div>
 			  </div>

@@ -24,19 +24,11 @@ class App extends React.Component {
 		this.state = {
 			
 		}
-		//this.logout = this.logout.bind(this);
 	}
 
 	componentDidMount() {
 		Actions.fetchUser();
 	}
-
-	// logout() {
-	// 	axios.get('/api/logout')
-	// 	  .then(() => { 
-	// 		this.setState({ user: {name: 'guest'} });
-	// 	  })
-	// }
 
 	render() {
 		return (
