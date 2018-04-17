@@ -25,6 +25,7 @@ class Chat extends React.Component {
 
 	componentDidMount() {
 		this.scrollToBottom();
+		this.state.socket.emit('user', this.state.user.name)
 		const self = this;
 		this.state.socket.on('receive-message', function(msg) {
 			self.setState({ messages: msg });
