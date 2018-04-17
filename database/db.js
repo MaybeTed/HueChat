@@ -30,17 +30,19 @@ const messagesSchema = mongoose.Schema({
 	user: { type: String, required: true },
 	message: { type: String, required: true },
 	color: { type: String, required: true },
+	font: { type: String, required: true },
 	date: { type: String, required: true }
 });
 
 const Message = mongoose.model('Message', messagesSchema);
 
-function insertMessage(name, message, color, callback) {
+function insertMessage(name, message, color, font, callback) {
 	console.log('color from db b4 insert: ', color)
 	let msg = new Message({
 		user: name,
 		message: message,
 		color: color,
+		font: font,
 		date: new Date(),
 	})
 	msg.save().then(function() {
