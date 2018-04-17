@@ -60,7 +60,6 @@ app.post('/api/register', (req, res) => {
 });
 
 app.get('/api/getUser', (req, res) => {
-	console.log('FROM /getUser, session: ', req.session.user)
 	if (req.session.user) {
 		res.send(req.session.user);
 	} else {
@@ -73,8 +72,7 @@ app.post('/login', (req, res) => {
 	let pass = req.body.password;
 	db.user.findOne({ username: name })
 		.exec(function(err, data) {
-			if (err) {
-				console.log('unable to find user');
+			if (data === null) {
 				res.send('that username doesn\'t exist');
 			} else {
 				const password = data.password;
