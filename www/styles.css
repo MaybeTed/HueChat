@@ -130,9 +130,15 @@ a {
 	padding: 5px 0 0 5px;
 }
 
+.fonts-container {
+	position: absolute;
+	bottom: 25px;
+}
+
 .colors-container {
 	position: absolute;
 	bottom: 5px;
+	left: 2px;
 	display: flex;
 	/*flex-wrap: wrap;*/
 	justify-content: space-around;

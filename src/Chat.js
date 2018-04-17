@@ -13,11 +13,13 @@ class Chat extends React.Component {
 		super();
 		this.state = {
 			color: 'black',
+			font: 'arial',
 			messages: [],
 			socket: window.io(location.host),
 			user: {name: 'guest'},
 			users: []
 		};
+		this.changeFont = this.changeFont.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.selectColor = this.selectColor.bind(this);
 		this.submitMessage = this.submitMessage.bind(this);
@@ -53,6 +55,10 @@ class Chat extends React.Component {
 		this.state.socket.emit('user', user);
 	}
 
+	changeFont(e) {
+		this.setState({ font: e.target.value })
+	}
+
 	scrollToBottom() {
 		this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
 	}
@@ -74,7 +80,8 @@ class Chat extends React.Component {
 		let message = {
 			user: name,
 			message: msg,
-			color: this.state.color
+			color: this.state.color,
+			font: this.state.font
 		};
 		this.state.socket.emit('new-message', message);
 		document.getElementById('message').value = '';
@@ -82,14 +89,18 @@ class Chat extends React.Component {
 
 	render() {
 		let messages = this.state.messages.map((msg, i) => {
-			return <li key={i}>{msg.user}: <span style={{'color': msg.color}}>{msg.message}</span></li>
+			return <li key={i}>{msg.user}: <span style={{'color': msg.color, 'font-family': msg.font}}>{msg.message}</span></li>
 		});
 
 		let users = this.state.users.map((user, i) => {
 			return <li key={i}>{user}</li>
 		});
 
-		// if you add a color here you need to also add it in the css file
+		const fontOptions = ['arial', 'courier', 'georgia', 'palatino', 'garamond', 'comic sans ms', 'trebuchet ms', 'impact'];
+		let fonts = fontOptions.map((font, i) => {
+			return <option value={font} key={i}>{font}</option>
+		});
+
 		const colorOptions = ['black', 'blue', 'red', 'green', 'orange', 'purple', 'pink'];
 		let colors = colorOptions.map((color, i) => {
 			return <div id={color} key={i} style={{'background': color}} onClick={() => this.selectColor(color)}/>
@@ -104,7 +115,7 @@ class Chat extends React.Component {
 				  </ul>
 				  <div class="write-message-container">
 				    <form onSubmit={this.submitMessage}>
-				      <input id="message" type="text" style={{'color': this.state.color}} placeholder="Write your message here" />
+				      <input id="message" type="text" style={{'color': this.state.color, 'font-family': this.state.font }} placeholder="Write your message here" />
 				      <button type="submit">Send</button>
 				    </form>
 			      </div>
@@ -116,7 +127,9 @@ class Chat extends React.Component {
 			          {users}
 			        </ul>
 			      </div>
-
+			      <select className="fonts-container" onChange={this.changeFont}>
+			      	{fonts}
+			      </select>
 			      <div className="colors-container">
 			      	{colors}
 			      </div>
