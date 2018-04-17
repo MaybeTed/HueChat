@@ -73,14 +73,12 @@ app.post('/login', (req, res) => {
 	db.user.findOne({ username: name })
 		.exec(function(err, data) {
 			if (data === null) {
-				res.send('that username doesn\'t exist');
+				res.send('noUser');
 			} else {
 				const password = data.password;
 				const salt = data.salt;
 				const hash = bcrypt.hashSync(pass, salt);
-				if (data === null) {
-					res.send('noUser')
-				} else if (hash === password) {
+				if (hash === password) {
 					req.session.user = {
 						name: data.username,
 						email: data.email
@@ -110,7 +108,6 @@ io.on('connection', function(socket) {
 	function getMessages() {
 		// Get messages from mongo
 		db.message.find()
-			.sort('date')
 			.exec(function(err, data) {
 				if (err) {
 					console.log('error retrieving messages: ', err);
