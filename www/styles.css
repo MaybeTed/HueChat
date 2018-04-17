@@ -32,6 +32,10 @@ a {
 	transform: translateX(-50%);
 }
 
+.title:hover {
+	color: white;
+}
+
 .login-buttons {
 	width: 200px;
 	padding-top: 10px;
@@ -43,6 +47,11 @@ a {
 	padding: 10px 15px;
 	margin-left: 20px;
 	cursor: pointer;
+}
+
+.login-buttons li:hover, .logout:hover {
+	color: white;
+	border: 1px solid white;
 }
 
 .welcome {
