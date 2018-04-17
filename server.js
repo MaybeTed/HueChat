@@ -139,7 +139,7 @@ io.on('connection', function(socket) {
 	// Handle new message
 	socket.on('new-message', function(msg) {
 		// insert into db
-		db.insertMessage(msg.user, msg.message, msg.color, getMessages);
+		db.insertMessage(msg.user, msg.message, msg.color, msg.font, getMessages);
 	})
 
 	// Disconnect when navigating away from chat component
