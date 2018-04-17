@@ -89,6 +89,12 @@ class Chat extends React.Component {
 			return <li key={i}>{user}</li>
 		});
 
+		// if you add a color here you need to also add it in the css file
+		const colorOptions = ['black', 'blue', 'red', 'green', 'orange', 'purple', 'pink'];
+		let colors = colorOptions.map((color, i) => {
+			return <div id={color} key={i} style={{'background': color}} onClick={() => this.selectColor(color)}/>
+		});
+
 		return (
 			  <div className="main-container">
 			  	<div className="chat-left">
@@ -110,14 +116,9 @@ class Chat extends React.Component {
 			          {users}
 			        </ul>
 			      </div>
+
 			      <div className="colors-container">
-			      	<div id="black" onClick={() => this.selectColor('black')}/>
-			      	<div id="blue" onClick={() => this.selectColor('blue')}/>
-			      	<div id="red" onClick={() => this.selectColor('red')}/>
-			      	<div id="green" onClick={() => this.selectColor('green')}/>
-			      	<div id="orange" onClick={() => this.selectColor('orange')}/>
-			      	<div id="purple" onClick={() => this.selectColor('purple')}/>
-			      	<div id="pink" onClick={() => this.selectColor('pink')}/>
+			      	{colors}
 			      </div>
 			    </div>
 			  </div>
