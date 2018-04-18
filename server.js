@@ -8,6 +8,7 @@ const session = require('express-session');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
+const nodemailer = require('nodemailer');
 const app = express();
 const http = require('http').Server(app);
 const db = require('./database/db.js');
