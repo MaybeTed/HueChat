@@ -8,6 +8,7 @@ const session = require('express-session');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
+const nodemailer = require('nodemailer');
 const app = express();
 const http = require('http').Server(app);
 const db = require('./database/db.js');
@@ -45,18 +46,75 @@ app.use(webpackDevMiddleware(compiler, {
 
 
 
+/***                                     ***/
+/***     Email users to confirm account  ***/
+/***                                     ***/
+
+const transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: 'HueChatMailer@gmail.com',
+		pass: process.env.mailPass || 'gkw92hy57'
+	}
+});
+
+// create confirmation code
+const randomNumber = () => {
+	const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    return Math.floor(Math.random() * 1000) + letters[Math.floor(Math.random() * letters.length)] + Math.floor(Math.random() * 100);
+}
+
+const welcomeMailOptions = (email, username, confirmNumber) => ({
+	from: 'no-reply@huechatmailer.com',
+	to: email,
+	subject: 'Welcome to Hue-Chat, ' + username + '!',
+	text: 'Your confirmation number is: ' + confirmNumber
+});
+
+
+
+/***                     ***/
+/***     API Routes      ***/
+/***                     ***/
+
 app.post('/api/register', (req, res) => {
 	const salt = bcrypt.genSaltSync();
 	const hash = bcrypt.hashSync(req.body.password, salt);
-	db.insertUser(req.body.name, hash, req.body.email, salt);
-	req.session.regenerate(() => {
-		req.session.user = {
-			name: req.body.name,
-			email: req.body.email
+	const confirmNumber = randomNumber();
+	db.insertUser(req.body.name, hash, req.body.email, salt, confirmNumber);
+	transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
+		if (error) {
+			console.error(error);
+		} else {
+			console.log('email success: ', info.response);
 		}
-		req.session.save();
 	});
 	res.end();
+});
+
+app.post('/api/confirm', (req, res) => {
+	const userResponse = req.body.answer;
+	const email = req.body.email;
+	db.user.findOne({ email: email })
+		.exec(function(err, data) {
+			if (data === null) {
+				res.send('could not find that email in database');
+			} else if (userResponse === data.confirmNumber) {
+				// update user confirmed from false to true
+				data.confirmed = true;
+				data.save();
+				req.session.regenerate(() => {
+					req.session.user = {
+						name: data.username,
+						email: req.body.email
+					}
+					req.session.save();
+				});
+				res.send('success');
+			} else {
+				res.send('number error');
+			}
+		})
 });
 
 app.get('/api/getUser', (req, res) => {
@@ -100,7 +158,12 @@ app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '/www/index.html'));
 });
 
-// sockets
+
+
+/***                    ***/
+/***       SOCKETS      ***/
+/***                    ***/
+
 io.on('connection', function(socket) {
 	connections.push(socket);
 	console.log('Connected: %s sockets connected', connections.length);

@@ -11,17 +11,21 @@ const userSchema = mongoose.Schema({
 	username: { type: String, required: true },
 	password: { type: String, required: true },
 	email: { type: String, required: true },
-	salt: { type: String, required: true }
+	salt: { type: String, required: true },
+	confirmNumber: { type: String, required: true },
+	confirmed: { type: Boolean, required: true }
 });
 
 const User = mongoose.model('User', userSchema);
 
-function insertUser(name, password, email, salt) {
+function insertUser(name, password, email, salt, confirmNumber) {
 	let user = new User({
 		username: name,
 		password: password,
 		email: email,
-		salt: salt
+		salt: salt,
+		confirmNumber: confirmNumber,
+		confirmed: false
 	})
 	user.save();
 }
