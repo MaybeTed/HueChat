@@ -9,9 +9,31 @@ class Register extends React.Component {
 		this.state = {
 			nameResponse: '',
 			passResponse: '',
-			emailResponse: ''
+			emailResponse: '',
+			confirm: false,
+			confirmError: '',
+			confirmEmailError: ''
 		}
+		this.handleConfirm = this.handleConfirm.bind(this);
 		this.registerUser = this.registerUser.bind(this);
+	}
+
+	handleConfirm() {
+		let confirmationNumber = document.getElementById('confirmation').value;
+		let confirmEmail = document.getElementById('confirmEmail').value;
+		axios.post('/api/confirm', {
+			answer: confirmationNumber,
+			email: confirmEmail
+		}).then((response) => {
+			if (response.data === '' && response.status === 200) {
+				Actions.fetchUser();
+				this.props.history.push('/')
+			} else if (response.data === 'number error') {
+				this.setState({ confirmError: 'You have entered the wrong confirmation number' });
+			} else {
+				this.setState({ confirmEmailError: 'We couln\'t find that email address' });
+			}
+		})
 	}
 
 	invalidEmail(email) {
@@ -63,12 +85,26 @@ class Register extends React.Component {
 			password,
 		   	email
 		}).then(() => {
-			Actions.fetchUser();
-			this.props.history.push('/')
+			this.setState({ confirm: true });
 		})
 	}
 	
 	render() {
+		if (this.state.confirm) {
+			return (
+				<div className="login">
+				  <p>You have been sent an email with a confirmation number.</p>
+				  <p>Please enter your confirmation number in the box below to complete your registration.</p>
+				  <input id="confirmation" />
+				  <div>{this.state.confirmError}</div>
+				  <p>Please confirm your email address:</p>
+				  <input id="confirmEmail" />
+				  <div>{this.state.confirmEmailError}</div>
+				  <button onClick={this.handleConfirm}>Submit</button>
+				</div>
+			)
+		}
+
 		return (
 			  <div className="login">
 			  	Username
