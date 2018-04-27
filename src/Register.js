@@ -118,7 +118,6 @@ class Register extends React.Component {
 				  <input id="confirmEmail" />
 				  <div>{this.state.confirmEmailError}</div>
 				  <button onClick={this.handleConfirm}>Submit</button>
-				  <div>{this.state.emailSent}</div>
 				</div>
 			)
 		}
@@ -131,6 +130,7 @@ class Register extends React.Component {
 			    	<p>Your username is {this.state.username}</p>
 			    	<p>If you have forgotten your password you can click the button below to have a new password sent to you</p>
 			    	<button onClick={this.forgotPassword}>Forgot password</button>
+			    	<div>{this.state.emailSent}</div>
 			    </div>
 			    :
 			  	<div>
