@@ -71,6 +71,13 @@ const welcomeMailOptions = (email, username, confirmNumber) => ({
 	text: 'Your confirmation number is: ' + confirmNumber
 });
 
+const forgotPasswordMailOptions = (email, username) => ({
+	from: 'no-reply@huechatmailer.com',
+	to: email,
+	subject: 'The email you requested',
+	text: 'Hello, ' + username + '. We\'re sending this email because you have requested a new password. Your new password is: ' + randomNumber()
+});
+
 
 
 /***                     ***/
@@ -78,18 +85,28 @@ const welcomeMailOptions = (email, username, confirmNumber) => ({
 /***                     ***/
 
 app.post('/api/register', (req, res) => {
-	const salt = bcrypt.genSaltSync();
-	const hash = bcrypt.hashSync(req.body.password, salt);
-	const confirmNumber = randomNumber();
-	db.insertUser(req.body.name, hash, req.body.email, salt, confirmNumber);
-	transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
-		if (error) {
-			console.error(error);
-		} else {
-			console.log('email success: ', info.response);
-		}
-	});
-	res.end();
+	db.user.findOne({ email: req.body.email })
+		.exec(function(err, data) {
+			console.log('data from findOne: ', data)
+			if (data === null) {
+				const salt = bcrypt.genSaltSync();
+				const hash = bcrypt.hashSync(req.body.password, salt);
+				const confirmNumber = randomNumber();
+				db.insertUser(req.body.name, hash, req.body.email, salt, confirmNumber);
+				transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
+					if (error) {
+						console.error(error);
+					} else {
+						console.log('email success: ', info.response);
+					}
+				});
+				res.end();
+			} else if (data.confirmed) {
+				res.send({ message: 'is confirmed', username: data.username, email: data.email })
+			} else {
+				res.send({ message: 'not confirmed' })
+			}
+		})
 });
 
 app.post('/api/confirm', (req, res) => {
@@ -103,13 +120,13 @@ app.post('/api/confirm', (req, res) => {
 				// update user confirmed from false to true
 				data.confirmed = true;
 				data.save();
-				req.session.regenerate(() => {
+				//req.session.regenerate(() => {
 					req.session.user = {
 						name: data.username,
 						email: req.body.email
 					}
-					req.session.save();
-				});
+					//req.session.save();
+				//});
 				res.send('success');
 			} else {
 				res.send('number error');
@@ -118,6 +135,7 @@ app.post('/api/confirm', (req, res) => {
 });
 
 app.get('/api/getUser', (req, res) => {
+	console.log('req.session.user from getUser: ', req.session.user)
 	if (req.session.user) {
 		res.send(req.session.user);
 	} else {
@@ -153,6 +171,20 @@ app.get('/logout', (req, res) => {
 	req.session.destroy();
 	res.end();
 });
+
+app.post('/api/forgotPassword', (req, res) => {
+	db.user.findOne({ email: req.body.email })
+		.exec(function(err, data) {
+			transporter.sendMail(forgotPasswordMailOptions(req.body.email, data.username), function(error, info) {
+				if (error) {
+					console.error(error);
+				} else {
+					console.log('email success: ', info.response);
+				}
+			})
+			res.end();
+		})
+})
 
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '/www/index.html'));
