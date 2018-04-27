@@ -71,11 +71,11 @@ const welcomeMailOptions = (email, username, confirmNumber) => ({
 	text: 'Your confirmation number is: ' + confirmNumber
 });
 
-const forgotPasswordMailOptions = (email, username) => ({
+const forgotPasswordMailOptions = (email, username, password) => ({
 	from: 'no-reply@huechatmailer.com',
 	to: email,
 	subject: 'The email you requested',
-	text: 'Hello, ' + username + '. We\'re sending this email because you have requested a new password. Your new password is: ' + randomNumber()
+	text: 'Hello, ' + username + '. We\'re sending this email because you have requested a new password. Your new password is: ' + password
 });
 
 
@@ -173,9 +173,15 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/api/forgotPassword', (req, res) => {
+	let password = randomNumber();
+	const salt = bcrypt.genSaltSync();
+	const hash = bcrypt.hashSync(password, salt);
 	db.user.findOne({ email: req.body.email })
 		.exec(function(err, data) {
-			transporter.sendMail(forgotPasswordMailOptions(req.body.email, data.username), function(error, info) {
+			data.password = hash;
+			data.salt = salt;
+			data.save();
+			transporter.sendMail(forgotPasswordMailOptions(req.body.email, data.username, password), function(error, info) {
 				if (error) {
 					console.error(error);
 				} else {
