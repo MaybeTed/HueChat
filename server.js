@@ -89,6 +89,18 @@ app.post('/api/register', (req, res) => {
 		.exec(function(err, data) {
 			if (data === null) {
 				insertUser();
+			} else if (data.email === req.body.email && data.confirmed === false) {
+				const confirmNumber = randomNumber();
+				data.confirmNumber = confirmNumber;
+				data.save();
+				transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
+						if (error) {
+							console.error(error);
+						} else {
+							console.log('email success: ', info.response);
+						}
+					});
+				res.send({ message: 'not confirmed' });
 			} else {
 				res.send({ message: 'username taken' });
 			}
