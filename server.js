@@ -85,28 +85,38 @@ const forgotPasswordMailOptions = (email, username, password) => ({
 /***                     ***/
 
 app.post('/api/register', (req, res) => {
-	db.user.findOne({ email: req.body.email })
+	db.user.findOne({ username: req.body.name })
 		.exec(function(err, data) {
-			console.log('data from findOne: ', data)
 			if (data === null) {
-				const salt = bcrypt.genSaltSync();
-				const hash = bcrypt.hashSync(req.body.password, salt);
-				const confirmNumber = randomNumber();
-				db.insertUser(req.body.name, hash, req.body.email, salt, confirmNumber);
-				transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
-					if (error) {
-						console.error(error);
-					} else {
-						console.log('email success: ', info.response);
-					}
-				});
-				res.end();
-			} else if (data.confirmed) {
-				res.send({ message: 'is confirmed', username: data.username, email: data.email })
+				insertUser();
 			} else {
-				res.send({ message: 'not confirmed' })
+				res.send({ message: 'username taken' });
 			}
 		})
+
+	function insertUser() {
+		db.user.findOne({ email: req.body.email })
+			.exec(function(err, data) {
+				if (data === null) {
+					const salt = bcrypt.genSaltSync();
+					const hash = bcrypt.hashSync(req.body.password, salt);
+					const confirmNumber = randomNumber();
+					db.insertUser(req.body.name, hash, req.body.email, salt, confirmNumber);
+					transporter.sendMail(welcomeMailOptions(req.body.email, req.body.name, confirmNumber), function(error, info) {
+						if (error) {
+							console.error(error);
+						} else {
+							console.log('email success: ', info.response);
+						}
+					});
+					res.end();
+				} else if (data.confirmed) {
+					res.send({ message: 'is confirmed', username: data.username, email: data.email })
+				} else {
+					res.send({ message: 'not confirmed' })
+				}
+			})
+	}
 });
 
 app.post('/api/confirm', (req, res) => {

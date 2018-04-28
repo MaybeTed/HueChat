@@ -100,6 +100,8 @@ class Register extends React.Component {
 		}).then((response) => {
 			if (response.data && response.data.message === 'is confirmed') {
 				this.setState({ hasAccount: true, username: response.data.username, email: response.data.email });
+			} else if (response.data && response.data.message === 'username taken') {
+				this.setState({ nameResponse: 'That username is already taken' });
 			} else {
 				this.setState({ confirm: true });
 			}
