@@ -172,6 +172,15 @@ app.post('/login', (req, res) => {
 		.exec(function(err, data) {
 			if (data === null) {
 				res.send('noUser');
+			} else if (data.confirmed === false) {
+				transporter.sendMail(welcomeMailOptions(data.email, name, data.confirmNumber), function(error, info) {
+						if (error) {
+							console.error(error);
+						} else {
+							console.log('email success: ', info.response);
+						}
+					});
+				res.send('confirm email');
 			} else {
 				const password = data.password;
 				const salt = data.salt;
