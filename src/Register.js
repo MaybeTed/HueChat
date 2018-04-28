@@ -12,10 +12,23 @@ class Register extends React.Component {
 			emailResponse: '',
 			confirm: false,
 			confirmError: '',
-			confirmEmailError: ''
+			confirmEmailError: '',
+			hasAccount: false,
+			username: '',
+			email: '',
+			emailSent: ''
 		}
+		this.forgotPassword = this.forgotPassword.bind(this);
 		this.handleConfirm = this.handleConfirm.bind(this);
 		this.registerUser = this.registerUser.bind(this);
+	}
+
+	forgotPassword() {
+		axios.post('/api/forgotPassword', {
+			email: this.state.email
+		}).then(() => {
+			this.setState({ emailSent: 'An email has been sent. Please check your inbox' })
+		})
 	}
 
 	handleConfirm() {
@@ -25,7 +38,7 @@ class Register extends React.Component {
 			answer: confirmationNumber,
 			email: confirmEmail
 		}).then((response) => {
-			if (response.data === '' && response.status === 200) {
+			if (response.data === 'success') {
 				Actions.fetchUser();
 				this.props.history.push('/')
 			} else if (response.data === 'number error') {
@@ -84,8 +97,14 @@ class Register extends React.Component {
 			name,
 			password,
 		   	email
-		}).then(() => {
-			this.setState({ confirm: true });
+		}).then((response) => {
+			if (response.data && response.data.message === 'is confirmed') {
+				this.setState({ hasAccount: true, username: response.data.username, email: response.data.email });
+			} else if (response.data && response.data.message === 'username taken') {
+				this.setState({ nameResponse: 'That username is already taken' });
+			} else {
+				this.setState({ confirm: true });
+			}
 		})
 	}
 	
@@ -107,19 +126,31 @@ class Register extends React.Component {
 
 		return (
 			  <div className="login">
-			  	Username
-			  	<br />
-			  	<input id="userlogin"/>
-			  	<div className="username-response">{this.state.nameResponse}</div>
-			  	Password
-			  	<br />
-			  	<input type="password" id="userpass"/>
-			  	<div className="password-response">{this.state.passResponse}</div>
-			  	Email
-			  	<br />
-			  	<input id="email"/>
-			  	<div className="email-response">{this.state.emailResponse}</div>
-			  	<button onClick={this.registerUser}>Submit</button>
+			    {this.state.hasAccount ?
+			    <div>
+			    	<p>This email address already has an account.</p>
+			    	<p>Your username is {this.state.username}</p>
+			    	<p>If you have forgotten your password you can click the button below to have a new password sent to you</p>
+			    	<button onClick={this.forgotPassword}>Forgot password</button>
+			    	<div>{this.state.emailSent}</div>
+			    </div>
+			    :
+			  	<div>
+				  	Username
+				  	<br />
+				  	<input id="userlogin"/>
+				  	<div className="username-response">{this.state.nameResponse}</div>
+				  	Password
+				  	<br />
+				  	<input type="password" id="userpass"/>
+				  	<div className="password-response">{this.state.passResponse}</div>
+				  	Email
+				  	<br />
+				  	<input id="email"/>
+				  	<div className="email-response">{this.state.emailResponse}</div>
+				  	<button onClick={this.registerUser}>Submit</button>
+			  	</div>
+			    }
 			  </div>
 		);
 	}
