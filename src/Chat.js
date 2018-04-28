@@ -17,9 +17,11 @@ class Chat extends React.Component {
 			messages: [],
 			socket: window.io(location.host),
 			user: {name: 'guest'},
-			users: []
+			users: [],
+			focus: true
 		};
 		this.changeFont = this.changeFont.bind(this);
+		this.newMessage = this.newMessage.bind(this);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
 		this.selectColor = this.selectColor.bind(this);
 		this.submitMessage = this.submitMessage.bind(this);
@@ -30,11 +32,13 @@ class Chat extends React.Component {
 		this.state.socket.emit('user', this.state.user.name)
 		const self = this;
 		this.state.socket.on('receive-message', function(msg) {
+			self.newMessage();
 			self.setState({ messages: msg });
 		});
 		this.state.socket.on('users list', function(users) {
 			self.setState({ users })
 		})
+		this.onFocus();
 	}
 
 	componentWillUnmount() {
@@ -57,6 +61,27 @@ class Chat extends React.Component {
 
 	changeFont(e) {
 		this.setState({ font: e.target.value })
+	}
+
+	newMessage() {
+		const title = 'Hue-Chat';
+		const msg = 'NEW MESSAGE';
+		while(this.state.focus === false) {
+			setTimeout(() => {
+				document.title = document.title === title ? msg : title;
+			}, 700);
+		}
+	}
+
+	onFocus() {
+		let self = this;
+		window.onfocus = function() {
+			self.setState({ focus: true })
+		}
+
+		window.onblur = function() {
+			self.setState({ focus: false });
+		}
 	}
 
 	scrollToBottom() {
